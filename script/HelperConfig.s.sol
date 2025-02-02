@@ -47,8 +47,10 @@ contract HelperConfig is Script {
         vm.startBroadcast();
         // Deploy mock price feeds for Anvil
         MockV3Aggregator ethUsdPriceFeed = new MockV3Aggregator(DECIMALS, ETH_USD_PRICE);
-        ERC20Mock wethMock = new ERC20Mock("WETH", "WETH", msg.sender, 1000e18);
         MockV3Aggregator btcUsdPriceFeed = new MockV3Aggregator(DECIMALS, BTC_USD_PRICE);
+
+        // Deploy mock tokens and mint to the deployer
+        ERC20Mock wethMock = new ERC20Mock("WETH", "WETH", msg.sender, 1000e18);
         ERC20Mock wbtcMock = new ERC20Mock("WBTC", "WBTC", msg.sender, 1000e18);
         vm.stopBroadcast();
 

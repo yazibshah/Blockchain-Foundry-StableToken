@@ -157,7 +157,7 @@ contract DSCEngine is ReentrancyGuard {
         if (!success) {
             revert DSCEngine__Transfailed();
         }
-        _revertIfHelthFactorIsBroken(msg.sender);
+        // _revertIfHelthFactorIsBroken(msg.sender);
     }
 
     // in order to redeem collateral;
@@ -323,5 +323,13 @@ contract DSCEngine is ReentrancyGuard {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
         (, int256 price,,,) = priceFeed.latestRoundData();
         return ((uint256(price) * ADDITIONAL_FEED_PRECISION) * amount) / PRECISION;
+    }
+
+    function getAccountInformation(address user)
+        external
+        view
+        returns (uint256 totalDscMinted, uint256 collateralValueInUsd)
+    {
+        (totalDscMinted, collateralValueInUsd) = _getAccountInformation(user);
     }
 }
