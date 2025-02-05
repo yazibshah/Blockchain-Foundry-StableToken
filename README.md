@@ -7,10 +7,6 @@
    1. wETH
    2. wBTC
 
-
-
-
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.18;
@@ -20,23 +16,22 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AggregatorV3Interface} from "../lib/chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-
 contract DSCEngine is ReentrancyGuard {
-    /////////////////////////
-    // Errors //
-    ////////////////////////
-    error DSCEngine__NeedMoreThanZero();
-    error DSCEngine__TokenAddressesAndPriceFeedAddressesMustBeSameLength();
-    error DSCEngine__NotAllowedToken();
-    error DSCEngine__Transfailed();
-    error DSCEngine__BreaksHealthFactor(uint256 healthFactor);
-    error DSCEngine__MintFailed();
-    error DSCEngine__TransferFailed();
-    error DSCEngine__HealthFactorOk();
-    error DSCEngine__HealthFactorNotImproved();
-    /////////////////////////
-    // State Variables //
-    /////////////////////////
+/////////////////////////
+// Errors //
+////////////////////////
+error DSCEngine**NeedMoreThanZero();
+error DSCEngine**TokenAddressesAndPriceFeedAddressesMustBeSameLength();
+error DSCEngine**NotAllowedToken();
+error DSCEngine**Transfailed();
+error DSCEngine**BreaksHealthFactor(uint256 healthFactor);
+error DSCEngine**MintFailed();
+error DSCEngine**TransferFailed();
+error DSCEngine**HealthFactorOk();
+error DSCEngine\_\_HealthFactorNotImproved();
+/////////////////////////
+// State Variables //
+/////////////////////////
 
     uint256 private constant ADDITIONAL_FEED_PRECISION = 1e10;
     uint256 private constant PRECISION = 1e18;
@@ -108,7 +103,7 @@ contract DSCEngine is ReentrancyGuard {
     // External Functions //
     ////////////////////////
 
-    
+
     function depositCollateralAndMintDsc(
         address tokenCollateralAddress,
         uint256 amountCollateral,
@@ -151,7 +146,7 @@ contract DSCEngine is ReentrancyGuard {
         _revertIfHelthFactorIsBroken(msg.sender);
     }
 
-    
+
 
     // CEI: check , facts , intractions
     function redeemCollateral(
@@ -167,7 +162,7 @@ contract DSCEngine is ReentrancyGuard {
         _revertIfHelthFactorIsBroken(msg.sender);
     }
 
-    
+
     function redeemCollateralForDsc(
         address tokenCollateralAddress,
         uint256 amountCollateral,
@@ -177,7 +172,7 @@ contract DSCEngine is ReentrancyGuard {
         redeemCollateral(tokenCollateralAddress, amountCollateral);
     }
 
-   
+
     function mintDsc(
         uint256 amountDscToMint
     ) public moreThanZero(amountDscToMint) nonReentrant {
@@ -359,9 +354,8 @@ contract DSCEngine is ReentrancyGuard {
     {
         (totalDscMinted, collateralValueInUsd) = _getAccountInformation(user);
     }
+
 }
-
-
 
 // SPDX-License-Identifier: MIT
 
@@ -376,14 +370,14 @@ import {ERC20Mock} from "@openzeppelin/contracts/mocks/ERC20Mock.sol";
 import "forge-std/console.sol";
 
 contract DSCEngineTest is Test {
-    DeployDSC deployer;
-    DecentralizedStableCoin dsc;
-    DSCEngine dsce;
-    HelperConfig config;
-    address ethUsdPriceFeed;
-    address btcUsdPriceFeed;
-    address weth;
-    address wbtc;
+DeployDSC deployer;
+DecentralizedStableCoin dsc;
+DSCEngine dsce;
+HelperConfig config;
+address ethUsdPriceFeed;
+address btcUsdPriceFeed;
+address weth;
+address wbtc;
 
     address public USER = makeAddr("user");
     uint256 public constant AMOUNT_COLLATERAL = 10 ether;
@@ -504,8 +498,8 @@ contract DSCEngineTest is Test {
         // // assertEq(totalDscMinted, 0);
         // assertEq(expectedDepositedAmount, AMOUNT_COLLATERAL);
     }
-}
 
+}
 
 forge test --match-test testCanDepositedCollateralAndGetAccountInfo -vvvv
 [⠢] Compiling...
@@ -513,88 +507,87 @@ forge test --match-test testCanDepositedCollateralAndGetAccountInfo -vvvv
 [⠒] Solc 0.8.24 finished in 2.78s
 Compiler run successful with warnings:
 Warning (2072): Unused local variable.
-  --> script/DeployDSC.s.sol:19:90:
-   |
-19 |         (address wethUsdPriceFeed, address wbtcUsdPriceFeed, address weth, address wbtc, uint256 deployerKey) =
-   |                                                                                          ^^^^^^^^^^^^^^^^^^^
+--> script/DeployDSC.s.sol:19:90:
+|
+19 | (address wethUsdPriceFeed, address wbtcUsdPriceFeed, address weth, address wbtc, uint256 deployerKey) =
+| ^^^^^^^^^^^^^^^^^^^
 
 Warning (2018): Function state mutability can be restricted to view
-  --> test/unit/DSCEngineTest.t.sol:72:5:
-   |
-72 |     function testGetTokenAmountFromUsd() public {
-   |     ^ (Relevant source part starts here and spans across multiple lines).
-
+--> test/unit/DSCEngineTest.t.sol:72:5:
+|
+72 | function testGetTokenAmountFromUsd() public {
+| ^ (Relevant source part starts here and spans across multiple lines).
 
 Ran 1 test for test/unit/DSCEngineTest.t.sol:DSCEngineTest
 [FAIL: panic: division or modulo by zero (0x12)] testCanDepositedCollateralAndGetAccountInfo() (gas: 144643)
 Logs:
-  ==================================USER Balance 10000000000000000000
+==================================USER Balance 10000000000000000000
 
 Traces:
-  [10432746] DSCEngineTest::setUp()
-    ├─ [4672358] → new DeployDSC@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
-    │   └─ ← [Return] 23224 bytes of code
-    ├─ [5526973] DeployDSC::run()
-    │   ├─ [3692685] → new HelperConfig@0x104fBc016F4bb334D775a19E8A6510109AC63E00
-    │   │   ├─ [0] VM::startBroadcast()
-    │   │   │   └─ ← [Return] 
-    │   │   ├─ [367042] → new <unknown>@0x34A1D3fff3958843C43aD80F30b94c510645C316
-    │   │   │   └─ ← [Return] 1056 bytes of code
-    │   │   ├─ [367042] → new <unknown>@0x90193C961A926261B756D1E5bb255e67ff9498A1
-    │   │   │   └─ ← [Return] 1056 bytes of code
-    │   │   ├─ [650674] → new <unknown>@0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496
-    │   │   │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: DeployDSC: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], value: 1000000000000000000000 [1e21])
-    │   │   │   └─ ← [Return] 2788 bytes of code
-    │   │   ├─ [650674] → new <unknown>@0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3
-    │   │   │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: DeployDSC: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], value: 1000000000000000000000 [1e21])
-    │   │   │   └─ ← [Return] 2788 bytes of code
-    │   │   ├─ [0] VM::stopBroadcast()
-    │   │   │   └─ ← [Return] 
-    │   │   └─ ← [Return] 6832 bytes of code
-    │   ├─ [911] HelperConfig::activeNetworkConfig() [staticcall]
-    │   │   └─ ← [Return] 0x34A1D3fff3958843C43aD80F30b94c510645C316, 0x90193C961A926261B756D1E5bb255e67ff9498A1, 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3, 77814517325470205911140941194401928579557062014761831930645393041380819009408 [7.781e76]
-    │   ├─ [0] VM::startBroadcast()
-    │   │   └─ ← [Return] 
-    │   ├─ [740201] → new <unknown>@0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76
-    │   │   ├─ emit OwnershipTransferred(previousOwner: 0x0000000000000000000000000000000000000000, newOwner: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38])
-    │   │   └─ ← [Return] 3353 bytes of code
-    │   ├─ [852032] → new DSCEngine@0x50EEf481cae4250d252Ae577A09bF514f224C6C4
-    │   │   └─ ← [Return] 3578 bytes of code
-    │   ├─ [2443] 0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76::transferOwnership(DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4])
-    │   │   ├─ emit OwnershipTransferred(previousOwner: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], newOwner: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4])
-    │   │   └─ ← [Stop] 
-    │   ├─ [0] VM::stopBroadcast()
-    │   │   └─ ← [Return] 
-    │   └─ ← [Return] 0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76, DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], HelperConfig: [0x104fBc016F4bb334D775a19E8A6510109AC63E00]
-    ├─ [911] HelperConfig::activeNetworkConfig() [staticcall]
-    │   └─ ← [Return] 0x34A1D3fff3958843C43aD80F30b94c510645C316, 0x90193C961A926261B756D1E5bb255e67ff9498A1, 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3, 77814517325470205911140941194401928579557062014761831930645393041380819009408 [7.781e76]
-    ├─ [24724] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::mint(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], 10000000000000000000 [1e19])
-    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], value: 10000000000000000000 [1e19])
-    │   └─ ← [Stop] 
-    ├─ [604] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::balanceOf(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D]) [staticcall]
-    │   └─ ← [Return] 10000000000000000000 [1e19]
-    ├─ [0] console::log("==================================USER Balance", 10000000000000000000 [1e19]) [staticcall]
-    │   └─ ← [Stop] 
-    └─ ← [Stop] 
+[10432746] DSCEngineTest::setUp()
+├─ [4672358] → new DeployDSC@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+│ └─ ← [Return] 23224 bytes of code
+├─ [5526973] DeployDSC::run()
+│ ├─ [3692685] → new HelperConfig@0x104fBc016F4bb334D775a19E8A6510109AC63E00
+│ │ ├─ [0] VM::startBroadcast()
+│ │ │ └─ ← [Return]
+│ │ ├─ [367042] → new <unknown>@0x34A1D3fff3958843C43aD80F30b94c510645C316
+│ │ │ └─ ← [Return] 1056 bytes of code
+│ │ ├─ [367042] → new <unknown>@0x90193C961A926261B756D1E5bb255e67ff9498A1
+│ │ │ └─ ← [Return] 1056 bytes of code
+│ │ ├─ [650674] → new <unknown>@0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496
+│ │ │ ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: DeployDSC: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], value: 1000000000000000000000 [1e21])
+│ │ │ └─ ← [Return] 2788 bytes of code
+│ │ ├─ [650674] → new <unknown>@0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3
+│ │ │ ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: DeployDSC: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], value: 1000000000000000000000 [1e21])
+│ │ │ └─ ← [Return] 2788 bytes of code
+│ │ ├─ [0] VM::stopBroadcast()
+│ │ │ └─ ← [Return]
+│ │ └─ ← [Return] 6832 bytes of code
+│ ├─ [911] HelperConfig::activeNetworkConfig() [staticcall]
+│ │ └─ ← [Return] 0x34A1D3fff3958843C43aD80F30b94c510645C316, 0x90193C961A926261B756D1E5bb255e67ff9498A1, 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3, 77814517325470205911140941194401928579557062014761831930645393041380819009408 [7.781e76]
+│ ├─ [0] VM::startBroadcast()
+│ │ └─ ← [Return]
+│ ├─ [740201] → new <unknown>@0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76
+│ │ ├─ emit OwnershipTransferred(previousOwner: 0x0000000000000000000000000000000000000000, newOwner: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38])
+│ │ └─ ← [Return] 3353 bytes of code
+│ ├─ [852032] → new DSCEngine@0x50EEf481cae4250d252Ae577A09bF514f224C6C4
+│ │ └─ ← [Return] 3578 bytes of code
+│ ├─ [2443] 0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76::transferOwnership(DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4])
+│ │ ├─ emit OwnershipTransferred(previousOwner: DefaultSender: [0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38], newOwner: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4])
+│ │ └─ ← [Stop]
+│ ├─ [0] VM::stopBroadcast()
+│ │ └─ ← [Return]
+│ └─ ← [Return] 0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76, DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], HelperConfig: [0x104fBc016F4bb334D775a19E8A6510109AC63E00]
+├─ [911] HelperConfig::activeNetworkConfig() [staticcall]
+│ └─ ← [Return] 0x34A1D3fff3958843C43aD80F30b94c510645C316, 0x90193C961A926261B756D1E5bb255e67ff9498A1, 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3, 77814517325470205911140941194401928579557062014761831930645393041380819009408 [7.781e76]
+├─ [24724] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::mint(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], 10000000000000000000 [1e19])
+│ ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], value: 10000000000000000000 [1e19])
+│ └─ ← [Stop]
+├─ [604] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::balanceOf(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D]) [staticcall]
+│ └─ ← [Return] 10000000000000000000 [1e19]
+├─ [0] console::log("==================================USER Balance", 10000000000000000000 [1e19]) [staticcall]
+│ └─ ← [Stop]
+└─ ← [Stop]
 
-  [144643] DSCEngineTest::testCanDepositedCollateralAndGetAccountInfo()
-    ├─ [0] VM::startPrank(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D])
-    │   └─ ← [Return] 
-    ├─ [24647] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::approve(DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], 10000000000000000000 [1e19])
-    │   ├─ emit Approval(owner: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], spender: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 10000000000000000000 [1e19])
-    │   └─ ← [Return] true
-    ├─ [104529] DSCEngine::depositCollateral(0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 10000000000000000000 [1e19])
-    │   ├─ emit CollateralDeposit(user: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], token: 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, amount: 10000000000000000000 [1e19])
-    │   ├─ [32479] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::transferFrom(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], 10000000000000000000 [1e19])
-    │   │   ├─ emit Approval(owner: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], spender: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 0)
-    │   │   ├─ emit Transfer(from: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], to: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 10000000000000000000 [1e19])
-    │   │   └─ ← [Return] true
-    │   ├─ [8991] 0x34A1D3fff3958843C43aD80F30b94c510645C316::latestRoundData() [staticcall]
-    │   │   └─ ← [Return] 1, 200000000000 [2e11], 1, 1, 1
-    │   ├─ [8991] 0x90193C961A926261B756D1E5bb255e67ff9498A1::latestRoundData() [staticcall]
-    │   │   └─ ← [Return] 1, 100000000000 [1e11], 1, 1, 1
-    │   └─ ← [Revert] panic: division or modulo by zero (0x12)
-    └─ ← [Revert] panic: division or modulo by zero (0x12)
+[144643] DSCEngineTest::testCanDepositedCollateralAndGetAccountInfo()
+├─ [0] VM::startPrank(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D])
+│ └─ ← [Return]
+├─ [24647] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::approve(DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], 10000000000000000000 [1e19])
+│ ├─ emit Approval(owner: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], spender: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 10000000000000000000 [1e19])
+│ └─ ← [Return] true
+├─ [104529] DSCEngine::depositCollateral(0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, 10000000000000000000 [1e19])
+│ ├─ emit CollateralDeposit(user: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], token: 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496, amount: 10000000000000000000 [1e19])
+│ ├─ [32479] 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496::transferFrom(user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], 10000000000000000000 [1e19])
+│ │ ├─ emit Approval(owner: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], spender: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 0)
+│ │ ├─ emit Transfer(from: user: [0x6CA6d1e2D5347Bfab1d91e883F1915560e09129D], to: DSCEngine: [0x50EEf481cae4250d252Ae577A09bF514f224C6C4], value: 10000000000000000000 [1e19])
+│ │ └─ ← [Return] true
+│ ├─ [8991] 0x34A1D3fff3958843C43aD80F30b94c510645C316::latestRoundData() [staticcall]
+│ │ └─ ← [Return] 1, 200000000000 [2e11], 1, 1, 1
+│ ├─ [8991] 0x90193C961A926261B756D1E5bb255e67ff9498A1::latestRoundData() [staticcall]
+│ │ └─ ← [Return] 1, 100000000000 [1e11], 1, 1, 1
+│ └─ ← [Revert] panic: division or modulo by zero (0x12)
+└─ ← [Revert] panic: division or modulo by zero (0x12)
 
 Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 2.96ms (318.82µs CPU time)
 
@@ -605,3 +598,6 @@ Encountered 1 failing test in test/unit/DSCEngineTest.t.sol:DSCEngineTest
 [FAIL: panic: division or modulo by zero (0x12)] testCanDepositedCollateralAndGetAccountInfo() (gas: 144643)
 
 Encountered a total of 1 failing tests, 0 tests succeeded
+
+import {AggregatorV3Interface} from
+"../lib/chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";

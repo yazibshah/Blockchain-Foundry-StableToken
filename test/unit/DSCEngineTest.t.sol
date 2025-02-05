@@ -9,6 +9,8 @@ import {DSCEngine} from "../../src/DSCEngine.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/ERC20Mock.sol";
 import "forge-std/console.sol";
+import {MockFailedTransferFrom} from "../mocks/MockFailedTransferFrom.sol";
+import {MockV3Aggregator} from "../mocks/MockV3Aggregator.sol";
 
 contract DSCEngineTest is Test {
     DeployDSC deployer;
@@ -23,6 +25,7 @@ contract DSCEngineTest is Test {
     address public USER = makeAddr("user");
     uint256 public constant AMOUNT_COLLATERAL = 10 ether;
     uint256 public constant STARTING_ERC20_BALANCE = 10 ether;
+    uint256 amountToMint = 100 ether;
 
     function setUp() public {
         deployer = new DeployDSC();
@@ -45,6 +48,7 @@ contract DSCEngineTest is Test {
     address[] public tokenAddresses;
     address[] public priceFeedAddresses;
 
+    // /////////////// First Test /////////////// //
     function testRevertsIfTokenLengthDoesntMatchPriceFeeds() public {
         tokenAddresses.push(weth);
         priceFeedAddresses.push(ethUsdPriceFeed);
@@ -62,19 +66,20 @@ contract DSCEngineTest is Test {
     // Price Test //
     // //////////////
 
-    function testGetUsdValue() public view {
-        uint256 ethAmount = 15e18;
-        uint256 expectedUsd = 30000e18;
-        uint256 actualUsd = dsce.getUsdValue(weth, ethAmount);
-        assertEq(expectedUsd, actualUsd);
-    }
-
+    // /////////////// 2nd Test /////////////// //
     function testGetTokenAmountFromUsd() public {
         uint256 usdAmount = 100 ether;
 
         uint256 expectedWeth = 0.05 ether;
         uint256 actualWeth = dsce.getTokenAmountFromUsd(weth, usdAmount);
         assertEq(expectedWeth, actualWeth);
+    }
+
+    function testGetUsdValue() public view {
+        uint256 ethAmount = 15e18;
+        uint256 expectedUsd = 30000e18;
+        uint256 actualUsd = dsce.getUsdValue(weth, ethAmount);
+        assertEq(expectedUsd, actualUsd);
     }
 
     // //////////////
@@ -117,15 +122,17 @@ contract DSCEngineTest is Test {
             address(dsce),
             AMOUNT_COLLATERAL
         );
-        console.log("SUccess Status=====================", success);
-        console.log(
-            "check Approval=============================",
-            ERC20Mock(weth).allowance(USER, address(dsce))
-        );
         DSCEngine(address(dsce)).depositCollateral(weth, AMOUNT_COLLATERAL);
         vm.stopPrank();
-        assertEq(success, true);
         _;
+    }
+
+    function testCanDepositCollateralWithOutMinting()
+        public
+        depositedCollateral
+    {
+        uint256 userBalance = dsc.balanceOf(USER);
+        assertEq(userBalance, 0);
     }
 
     function testCanDepositedCollateralAndGetAccountInfo()
@@ -140,5 +147,38 @@ contract DSCEngineTest is Test {
         );
         assertEq(totalDscMinted, 0);
         assertEq(expectedDepositedAmount, AMOUNT_COLLATERAL);
+    }
+
+    ///////////////////////////////////////
+    // depositCollateralAndMintDsc Tests //
+    ///////////////////////////////////////
+
+    function testRevertsIfMintedDscBreaksHealthFactor() public {
+        (, int256 price, , , ) = MockV3Aggregator(ethUsdPriceFeed)
+            .latestRoundData();
+        amountToMint =
+            (AMOUNT_COLLATERAL *
+                uint256(price) *
+                dsce.getAdditionalFeedPrecision()) /
+            dsce.getPrecision();
+        vm.startPrank(USER);
+        ERC20Mock(weth).approve(address(dsce), AMOUNT_COLLATERAL);
+
+        uint256 expextedHealthFactor = dsce.calculateHealthFactor(
+            amountToMint,
+            dsce.getUsdValue(weth, AMOUNT_COLLATERAL)
+        );
+        console.log(
+            "expextedHealthFactor====================",
+            expextedHealthFactor
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                DSCEngine.DSCEngine__BreaksHealthFactor.selector,
+                expextedHealthFactor
+            )
+        );
+        dsce.depositCollateralAndMintDsc(weth, AMOUNT_COLLATERAL, amountToMint);
+        vm.stopPrank();
     }
 }
