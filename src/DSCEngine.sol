@@ -28,6 +28,7 @@ pragma solidity ^0.8.18;
 import {DecentralizedStableCoin} from "./DecentralizedStableCoin.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "forge-std/console.sol";
 import {AggregatorV3Interface} from "../lib/chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 /*
@@ -308,6 +309,7 @@ contract DSCEngine is ReentrancyGuard {
             address(this),
             amountDscToBurn
         );
+
         if (!success) {
             revert DSCEngine__Transfailed();
         }

@@ -40,6 +40,7 @@ contract DSCEngineTest is Test {
             "==================================USER Balance",
             ERC20Mock(weth).balanceOf(USER)
         );
+        // console.log("************DSC Address************", address(dsc));
     }
 
     // //////////////
@@ -278,15 +279,15 @@ contract DSCEngineTest is Test {
 
     function testCanBurnDsc() public depositCollateralAndMintDsc {
         vm.startPrank(USER);
-        dsc.approve(address(dsce), amountToMint);
+        bool success = dsc.approve(address(dsce), amountToMint);
+
+        uint256 userBalance = dsc.balanceOf(USER);
+
         dsce.burnDsc(amountToMint);
 
         vm.stopPrank();
-        uint256 userBalance = dsc.balanceOf(USER);
-        console.log(
-            "User ===========balance========================================",
-            userBalance
-        );
-        assertEq(userBalance, amountToMint);
+        userBalance = dsc.balanceOf(USER);
+
+        assertEq(userBalance, 0);
     }
 }
