@@ -56,16 +56,13 @@ contract DecentralizedStableCoin is ERC20Burnable, Ownable {
         }
         console.log("-----------Address msg.sender", balance);
         console.log("----------- _amount", _amount);
-        if ( balance < _amount ) {
+        if (balance < _amount) {
             revert DecentralizedStableCoin_BurnAmountExceedsBalance();
         }
         super.burn(_amount);
     }
 
-    function mint(
-        address _to,
-        uint256 _amount
-    ) external onlyOwner returns (bool) {
+    function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
         if (_to == address(0)) {
             revert DecentralizedStableCoin_NotZeroAddress();
         }

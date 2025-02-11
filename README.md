@@ -603,3 +603,8 @@ import {AggregatorV3Interface} from
 "../lib/chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 eval $(ssh-agent -s)
+
+
+
+Fuzz testing:
+1. what are our invariants/properties.
